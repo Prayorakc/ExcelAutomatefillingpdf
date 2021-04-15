@@ -1,0 +1,125 @@
+Option Explicit
+ 
+Sub PDFTemplate()
+Dim PDFFldr As FileDialog
+Set PDFFldr = Application.FileDialog(msoFileDialogFilePicker)
+With PDFFldr
+    .Title = "Select PDF file to attach"
+    .Filters.Add "PDF Type Files", "*.pdf", 1
+    If .Show <> -1 Then GoTo NoSelection
+    Sheet1.Range("C4").Value = .SelectedItems(1)
+End With
+NoSelection:
+End Sub
+Sub SavePDFFolder()
+Dim PDFFldr As FileDialog
+Set PDFFldr = Application.FileDialog(msoFileDialogFolderPicker)
+With PDFFldr
+    .Title = "Select a Folder"
+    If .Show <> -1 Then GoTo NoSel:
+    Sheet1.Range("C6").Value = .SelectedItems(1)
+End With
+NoSel:
+End Sub
+
+Sub CreatePDFForms()
+Dim PDFTemplateFile, NewPDFName, SavePDFFolder, [Column] As String
+Dim RunDate As Date
+Dim FirstRow, LastRow As Long
+With Sheet1
+
+If .Range("C4").Value = Empty Or .Range("C6").Value = Empty Then
+    MsgBox "Both PDF Template and Saved PDF Locations are required for macro to run"
+    Exit Sub
+End If
+
+LastRow = .Range("A9999").End(xlUp).Row  'Last Row
+PDFTemplateFile = .Range("C4").Value 'Template File Name
+SavePDFFolder = .Range("C6").Value 'Save PDF Folder
+'OpenUrl "" & PDFTemplateFile & "", Show_Maximized
+ThisWorkbook.FollowHyperlink PDFTemplateFile
+Application.Wait Now + 0.00003
+
+For FirstRow = 10 To LastRow
+Application.SendKeys "{Tab}", True
+Application.SendKeys "{Tab}", True
+VIN = .Range("A" & FirstRow).Value 'VIN
+'Application.SendKeys "{Tab}", True
+Application.SendKeys VIN, True
+Application.Wait Now + 0.00002
+
+Application.SendKeys "{Tab}", True
+Application.SendKeys .Range("B" & FirstRow).Value, True 'year
+Application.Wait Now + 0.00001
+Application.SendKeys "{Tab}", True
+
+Application.SendKeys .Range("C" & firstRow).Value, True 'Make
+Application.Wait Now + 0.00001
+Application.SendKeys "{Tab}", True
+
+
+Application.SendKeys .Range("D" & FirstRow).Value, True 'Color
+Application.Wait Now + 0.00001
+Application.SendKeys "{Tab}", True
+
+Application.SendKeys .Range("E" & firstRow).Value, True 'Body
+Application.Wait Now + 0.00001
+Application.SendKeys "{Tab}", True
+
+Application.SendKeys .Range("F" & FirstRow).Value, True 'State
+Application.Wait Now + 0.00001
+Application.SendKeys "{Tab}", True
+Application.SendKeys "{Tab}", True
+Application.SendKeys "{Tab}", True
+
+Application.SendKeys .Range("H" & FirstRow).Value, True 'First
+Application.Wait Now + 0.00001
+Application.SendKeys "{Tab}", True
+
+Application.SendKeys .Range("I" & FirstRow).Value, True 'Second
+Application.Wait Now + 0.00001
+Application.SendKeys "{Tab}", True
+
+Application.SendKeys .Range("J" & FirstRow).Value, True 'third
+Application.Wait Now + 0.00001
+Application.SendKeys "{Tab}", True
+
+Application.SendKeys .Range("K" & FirstRow).Value, True 'fourth
+Application.Wait Now + 0.00001
+Application.SendKeys "{Tab}", True
+
+Application.SendKeys .Range("L" & FirstRow).Value, True 'fifth
+Application.Wait Now + 0.00001
+Application.SendKeys "{Tab}", True
+
+Application.SendKeys .Range("M" & FirstRow).Value, True 'sixth
+Application.Wait Now + 0.00001
+Application.SendKeys "{Tab}", True
+
+    
+Application.SendKeys "^(p)", True
+Application.Wait Now + 0.00003
+Application.SendKeys "{Enter}", True
+Application.Wait Now + 0.00001
+
+Application.SendKeys SavePDFFolder & "\" & VIN & ".pdf"
+Application.Wait Now + 0.00002
+Application.SendKeys "{Enter}", True
+
+If Dir(SavePDFFolder & "\" & VIN & ".pdf") <> Empty Then Kill (SavePDFFolder & "\" & VIN & ".pdf")
+Application.Wait Now + 0.00002
+Application.SendKeys SavePDFFolder & "\" & VIN & ".pdf"
+Application.Wait Now + 0.00002
+Application.Wait Now + 0.00002
+
+Next VinRow
+Application.SendKeys "^(q)", True
+Application.SendKeys "{numlock}%s", True
+
+
+End With
+End Sub
+
+
+
+
